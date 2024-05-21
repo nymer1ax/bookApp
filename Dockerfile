@@ -5,8 +5,8 @@ WORKDIR /home/gradle/project
 # Copy source code
 COPY --chown=gradle:gradle . .
 
-# Build the application
-RUN gradle build --no-daemon
+# Clean and build the application
+RUN gradle clean build --no-daemon
 
 # Use an official OpenJDK runtime as a parent image
 FROM openjdk:17-jdk-slim
