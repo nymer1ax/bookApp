@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface BookRepository {
     List<Book> getAll();
     Optional<Book> getById(Long id);
+    Optional<Book> getByTitleAndAuthor(String title, String author);
     Book saveBook(Book book);
     void deleteById(Long id);
 }

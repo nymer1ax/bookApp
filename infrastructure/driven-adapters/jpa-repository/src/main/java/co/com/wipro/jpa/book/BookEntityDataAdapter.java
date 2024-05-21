@@ -39,6 +39,12 @@ public class BookEntityDataAdapter extends AdapterOperations<Book, BookEntityDat
     }
 
     @Override
+    public Optional<Book> getByTitleAndAuthor(String title, String author) {
+        Optional<BookEntityData> bookEntityDataOptional = this.repository.findByTitleAndAuthor(title, author);
+        return bookEntityDataOptional.map(bookEntityData -> mapper.map(bookEntityData, Book.class));
+    }
+
+    @Override
     public void deleteById(Long id) {
         this.repository.deleteById(id);
     }

@@ -14,7 +14,7 @@ public class CreateBookUseCase {
     private final BookRepository bookRepository;
 
     public Book saveBooking(Book book){
-      Optional<Book> existBook = bookRepository.getById(book.getId());
+      Optional<Book> existBook = bookRepository.getByTitleAndAuthor(book.getTitle(), book.getAuthor());
       if(existBook.isPresent()){
           throw new BookExistException("Conflict:: book Already exist.");
       }

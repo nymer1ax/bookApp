@@ -1,4 +1,5 @@
 package co.com.wipro.api;
+import co.com.wipro.api.dto.BookRequest;
 import co.com.wipro.model.book.Book;
 import co.com.wipro.usecase.createbook.CreateBookUseCase;
 import co.com.wipro.usecase.deletebook.DeleteBookUseCase;
@@ -30,19 +31,19 @@ public class ApiRest {
     }
 
     @PostMapping(path = "/books", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Book> createBook(@RequestBody Book book) {
-        Book createdBook = createBookUseCase.saveBooking(book);
+    public ResponseEntity<Book> createBook(@RequestBody BookRequest book) {
+        Book createdBook = createBookUseCase.saveBooking(book.toBook());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdBook);
     }
 
     @PutMapping(path = "/books/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
-        Book updatedBook = updateBookUseCase.updateBook(id, book);
+    public ResponseEntity<Book> updateBook(@PathVariable(value = "id") Long id, @RequestBody BookRequest book) {
+        Book updatedBook = updateBookUseCase.updateBook(id,book.toBook());
         return ResponseEntity.ok(updatedBook);
     }
 
     @DeleteMapping(path = "/books/{id}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteBook(@PathVariable(value = "id") Long id) {
         deleteBookUseCase.delete(id);
         return ResponseEntity.noContent().build();
     }

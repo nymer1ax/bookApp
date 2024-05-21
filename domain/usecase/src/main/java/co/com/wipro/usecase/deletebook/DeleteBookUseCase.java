@@ -9,7 +9,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DeleteBookUseCase {
 
-    private BookRepository bookRepository;
+    private final BookRepository bookRepository;
     public void delete(Long id){
         Optional<Book> existBook = bookRepository.getById(id);
         if(existBook.isPresent()){
