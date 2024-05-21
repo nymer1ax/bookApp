@@ -2,11 +2,8 @@ package co.com.wipro.usecase.updatebook;
 
 import co.com.wipro.model.book.Book;
 import co.com.wipro.model.book.gateways.BookRepository;
-import co.com.wipro.usecase.exceptions.BookExistException;
 import co.com.wipro.usecase.exceptions.BookNotExistException;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Optional;
 
 @RequiredArgsConstructor
 public class UpdateBookUseCase {
