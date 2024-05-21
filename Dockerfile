@@ -1,41 +1,24 @@
-# Build stage: Compile the application using Gradle
-FROM eclipse-temurin:17-jdk-alpine AS build
+# Use an official Gradle image with JDK 17 to build the application
+FROM gradle:7.4.2-jdk17 AS builder
+WORKDIR /home/gradle/project
 
-# Set the working directory inside the container
+# Copy source code
+COPY --chown=gradle:gradle . .
+
+# Build the application
+RUN gradle build --no-daemon
+
+# Use an official OpenJDK runtime as a parent image
+FROM openjdk:17-jdk-slim
+
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy the Gradle wrapper and configuration files
-COPY gradlew gradlew
-COPY gradlew.bat gradlew.bat
-COPY gradle gradle
-COPY applications/App-service/build.gradle build.gradle
-COPY applications/App-service/settings.gradle settings.gradle
-COPY applications/App-service/src src
+# Copy the built jar from the build stage
+COPY --from=builder /home/gradle/project/build/libs/*.jar app.jar
 
-# Make the Gradle wrapper executable
-RUN chmod +x gradlew
-
-# Clean and build the application
-RUN ./gradlew clean build --no-daemon
-
-# Runtime stage: Create the runtime image
-FROM eclipse-temurin:17-jre-alpine
-
-# Set the working directory inside the container
-WORKDIR /app
-
-# Volume for temporary files
-VOLUME /tmp
-
-# Copy the JAR file from the build stage
-COPY --from=build /app/build/libs/*.jar bookApp.jar
-
-# Set environment variables
-ENV JAVA_OPTS="-Xshareclasses:name=cacheapp,cacheDir=/cache,nonfatal -XX:+UseContainerSupport -XX:MaxRAMPercentage=70 -Djava.security.egd=file:/dev/./urandom"
-
-# Create a non-root user and switch to it
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-USER appuser
+# Expose the port the app runs on
+EXPOSE 8080
 
 # Run the application
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar bookApp.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
