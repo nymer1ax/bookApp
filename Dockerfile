@@ -1,24 +1,24 @@
-# Use an official Eclipse Temurin JDK as a parent image for building the application
+# Build stage: Compile the application using Gradle
 FROM eclipse-temurin:17-jdk-alpine AS build
 
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the Gradle wrapper and related files from the project root
-COPY gradlew ./gradlew
-COPY gradlew.bat ./gradlew.bat
-COPY gradle ./gradle
-COPY applications/App-service/build.gradle ./build.gradle
-COPY applications/App-service/settings.gradle ./settings.gradle
-COPY applications/App-service/src ./src
+# Copy the Gradle wrapper and configuration files
+COPY gradlew gradlew
+COPY gradlew.bat gradlew.bat
+COPY gradle gradle
+COPY applications/App-service/build.gradle build.gradle
+COPY applications/App-service/settings.gradle settings.gradle
+COPY applications/App-service/src src
 
 # Make the Gradle wrapper executable
 RUN chmod +x gradlew
 
-# Build the application
-RUN ./gradlew build --no-daemon
+# Clean and build the application
+RUN ./gradlew clean build --no-daemon
 
-# Use an official Eclipse Temurin JRE as a parent image for running the application
+# Runtime stage: Create the runtime image
 FROM eclipse-temurin:17-jre-alpine
 
 # Set the working directory inside the container
