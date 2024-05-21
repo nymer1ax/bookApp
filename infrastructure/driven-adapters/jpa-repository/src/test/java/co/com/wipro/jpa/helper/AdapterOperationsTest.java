@@ -1,7 +1,5 @@
 package co.com.wipro.jpa.helper;
 
-import co.com.wipro.jpa.JPARepository;
-import co.com.wipro.jpa.JPARepositoryAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
