@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Repository
@@ -18,16 +19,27 @@ public class BookEntityDataAdapter extends AdapterOperations<Book, BookEntityDat
 
     @Override
     public List<Book> getAll() {
-        return null;
+        Iterable<BookEntityData> entities = this.repository.findAll();
+        return toList(entities).stream()
+                .map(book -> mapper.map(book, Book.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Book saveBook(Book book){
+        BookEntityData bookEntityData = mapper.map(book, BookEntityData.class);
+        BookEntityData savedEntityData = this.repository.save(bookEntityData);
+        return mapper.map(savedEntityData, Book.class);
     }
 
     @Override
     public Optional<Book> getById(Long id) {
-        return Optional.empty();
+        return this.repository.findById(id)
+                .map(bookEntityData -> mapper.map(bookEntityData, Book.class));
     }
 
     @Override
     public void deleteById(Long id) {
-
+        this.repository.deleteById(id);
     }
 }

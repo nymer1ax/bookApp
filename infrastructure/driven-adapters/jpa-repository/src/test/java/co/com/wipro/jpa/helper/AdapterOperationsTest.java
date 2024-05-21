@@ -42,7 +42,7 @@ class AdapterOperationsTest {
 
         when(repository.save(objectValue)).thenReturn(objectValue);
 
-        Object result = adapter.save(objectValue);
+        Object result = adapter.saveBook(objectValue);
 
         assertEquals(result, objectValue);
     }

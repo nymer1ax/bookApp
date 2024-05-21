@@ -34,7 +34,7 @@ public abstract class AdapterOperations<E, D, I, R extends CrudRepository<D, I> 
         return data != null ? toEntityFn.apply(data) : null;
     }
 
-    public E save(E entity) {
+    public E saveBook(E entity) {
         D data = toData(entity);
         return toEntity(saveData(data));
     }

@@ -9,6 +9,6 @@ import java.util.Optional;
 public interface BookRepository {
     List<Book> getAll();
     Optional<Book> getById(Long id);
-    Book save(Book book);
+    Book saveBook(Book book);
     void deleteById(Long id);
 }

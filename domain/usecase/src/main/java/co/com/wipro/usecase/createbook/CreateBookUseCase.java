@@ -18,6 +18,6 @@ public class CreateBookUseCase {
       if(existBook.isPresent()){
           throw new BookExistException("Conflict:: book Already exist.");
       }
-      return bookRepository.save(book);
+      return bookRepository.saveBook(book);
     }
 }

@@ -15,7 +15,7 @@ public class UpdateBookUseCase {
         existingBook.setAuthor(book.getAuthor());
         existingBook.setTitle(book.getTitle());
         existingBook.setGenre(book.getGenre());
-        return bookRepository.save(existingBook);
+        return bookRepository.saveBook(existingBook);
     }
 
 }
