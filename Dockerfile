@@ -1,24 +1,41 @@
-# Use an official Gradle image with JDK 17 to build the application
+# Etapa de compilación: Compilar la aplicación usando Gradle
 FROM gradle:7.4.2-jdk17 AS builder
+
+# Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /home/gradle/project
 
-# Copy source code
-COPY --chown=gradle:gradle . .
+# Copiar los archivos de configuración de Gradle y el código fuente
+COPY gradlew ./gradlew
+COPY gradlew.bat ./gradlew.bat
+COPY gradle ./gradle
+COPY build.gradle ./build.gradle
+COPY settings.gradle ./settings.gradle
+COPY . .
 
-# Clean and build the application
-RUN gradle clean build --no-daemon
+# Hacer que el wrapper de Gradle sea ejecutable
+RUN chmod +x gradlew
 
-# Use an official OpenJDK runtime as a parent image
-FROM openjdk:17-jdk-slim
+# Limpiar y construir la aplicación
+RUN ./gradlew clean build --no-daemon --stacktrace
 
-# Set the working directory in the container
+# Etapa de runtime: Crear la imagen de runtime
+FROM eclipse-temurin:17-jdk
+
+# Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copy the built jar from the build stage
-COPY --from=builder /home/gradle/project/build/libs/*.jar app.jar
+# Volumen para archivos temporales
+VOLUME /tmp
 
-# Expose the port the app runs on
-EXPOSE 8080
+# Copiar el archivo JAR desde la etapa de compilación
+COPY --from=builder /home/gradle/project/applications/app-service/build/libs/*.jar bookApp.jar
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Establecer variables de entorno
+ENV JAVA_OPTS="-Xshareclasses:name=cacheapp,cacheDir=/cache,nonfatal -XX:+UseContainerSupport -XX:MaxRAMPercentage=70 -Djava.security.egd=file:/dev/./urandom"
+
+# Crear un usuario no-root y cambiar a él
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+USER appuser
+
+# Ejecutar la aplicación
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar bookApp.jar"]
